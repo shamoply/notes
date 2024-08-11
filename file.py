@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (
     QListWidget,
     QPushButton,
     QHBoxLayout,
-    QVBoxLayout)
+    QVBoxLayout,
+    QInputDialog)
 
 import json
 
@@ -19,19 +20,10 @@ textarea.setPlaceholderText('Введите текст заметки:')
 note_text = QLabel('Список заметок')
 notes_list = QListWidget()
 
-
+# Кнопки
 btn_create = QPushButton('Создать заметку')
 btn_delete = QPushButton('Удалить заметку')
 btn_save = QPushButton('Сохранить заметку')
-
-
-
-
-
-
-
-
-
 
 ### Расположение виджетов по линиям
 main_line = QHBoxLayout()
@@ -66,10 +58,33 @@ with open ("notes.json", "r", encoding="utf-8") as file:
 def show_note():
     textarea.setText(notes_data[notes_list.currentItem().text()]['текст'])
 
+def add_note():
+    note_name, ok = QInputDialog.getText(win, 'Новая заметка', 'Создать заметку')
+    if ok and note_name:
+        notes_data[note_name] = {"текст": ""}
+        notes_list.addItem(note_name)
 
-# показывание окна и запуск приложения
+def save_note():
+    if notes_list.currentItem():
+        notes_data[notes_list.currentItem().text()]["текст"] = textarea.toPlainText()
+        with open ("notes.json", "w", encoding="utf-8") as file:
+            json.dump(notes_data, file)
+
+def delete_note():
+    if notes_list.currentItem():    
+        del notes_data[notes_list.curentItem().text()]
+        with open ("notes.json", "w", encoding="utf-8") as file:
+            json.dump(notes_data, file)
+        notes_list.clear()
+        notes_list.addItems(notes_data.keys())
+
+# Обработка событий
 notes_list.addItems(notes_data.keys())
 notes_list.itemClicked.connect(show_note)
+btn_create.clicked.connect(add_note)
+btn_save.clicked.connect(save_note)
+btn.delete.clicked.connect(delete_note)
 
+# показывание окна и запуск приложения
 win.show()
 app.exec()
