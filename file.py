@@ -83,7 +83,7 @@ notes_list.addItems(notes_data.keys())
 notes_list.itemClicked.connect(show_note)
 btn_create.clicked.connect(add_note)
 btn_save.clicked.connect(save_note)
-btn.delete.clicked.connect(delete_note)
+btn_delete.clicked.connect(delete_note)
 
 # показывание окна и запуск приложения
 win.show()
